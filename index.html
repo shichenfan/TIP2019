@@ -1,0 +1,161 @@
+<!doctype html>
+<html>
+	<head>
+		<!-- Required meta tags -->
+		<meta charset="utf-8">
+		<meta name=viewport content="width=device-width, initial-scale=1">
+		
+		<script src="bower_components/jquery/dist/jquery.min.js"></script>
+		<script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+		<script src="bower_components/moment/min/moment.min.js"></script>
+		<script src="bower_components/simple-statistics/dist/simple_statistics.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.9.3/lodash.min.js"></script>
+		<script src="bower_components/d3/d3.min.js"></script>
+		<script src="bower_components/d3/colorbrewer.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/highcharts/4.1.7/highcharts.js"></script>
+		<script src="http://code.highcharts.com/modules/exporting.js"></script>
+		<script src="assets/js/export-csv.js"></script>
+		<script src="assets/js/hashchange.min.js"></script>
+		<script src="//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js"></script>
+		<script src="//cdn.datatables.net/plug-ins/1.10.7/integration/bootstrap/3/dataTables.bootstrap.js"></script>
+		
+		<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.8/css/dataTables.bootstrap.min.css">
+		
+		
+		<script src='assets/js/leaflet.tooltip.js'></script>
+		<script src='assets/js/leaflet.label.js'></script>
+		<link href="https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.css" rel="stylesheet">
+		<script src="https://api.mapbox.com/mapbox-gl-js/v2.3.1/mapbox-gl.js"></script>
+		<link href="bower_components/bootstrap/dist/css/bootstrap.min.css">
+		<link rel="stylesheet" type="text/css" href="assets/css/leaflet.tooltip.css">
+		<link rel="stylesheet" type="text/css" href="assets/css/leaflet.label.css">
+		<link rel='stylesheet' href='http://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic,700italic'  type='text/css'>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+		<link rel="stylesheet" href="mystyle.css">
+
+		<!-- title -->
+		<title>ARC Performance Evaluation</title>
+		<!-- logo -->
+		<link rel="shortcut icon" sizes="196x196" href="assets/img/arc_logo196.png">
+	</head>
+	<body>
+		<nav class="navbar navbar-default navbar-fixed-top" >
+			<div class="container">
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+						<span class="sr-only">Toggle navigation</span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+					<a class="navbar-brand" href="#">
+						<span><img width="40" height="17" src="assets/img/arc_logo@2x.png"></span>
+						<span style="position:relative;top:2px;">Project Evaluation</span>
+					</a>
+				</div> <!--navbar-header-->
+
+				<div id="navbar" class="navbar-collapse collapse">
+					<ul id="myTabs" class="nav navbar-nav">
+						<li role="presentation" class="active" id="mapTabLink"><a href="#mapTab" role="tab" data-toggle="tab">Map</a></li>
+						<li role="presentation" id="tableTabLink"><a href="#tableTab">Table</a></li>
+					</ul>
+					<ul class="nav navbar-nav pull-right">
+						<li><a href="#myModal" data-toggle="modal" data-target="#aboutModal">About</a></li>
+					</ul>
+				</div><!--nav-collapse -->
+			</div><!--container--> 
+		</nav> <!-- navbar -->
+		
+		<div id="container">
+			<!-- Tab panes -->
+			<div class="tab-content col-sm-6" style="">
+				<div role="tabpanel" class="tab-pane active" id="mapTab">
+					<div id="map"></div>
+				</div><!-- mapTab -->
+				<div role="tabpanel" class="tab-pane" id="tableTab" style="overflow:hidden;">
+					<div class="table-responsive" style="overflow:hidden;">
+						<button class="btn btn-primary pull-right" id="filterChart">Filter Data</button>
+						<button class="btn btn-default pull-right" id="clearFilter">Clear</button>
+						<table class="table table-hover arrivals-table" id="projectTable"></table>
+					</div>
+				</div> <!-- tableTab -->
+			</div> <!--tab-content-->
+			<!-- Chart -->
+			<div id="chartSide" class="col-sm-6">
+				<div id="chartPanel" style="height:500px;">
+					<div id="chart"></div>
+					<div id="data-summary"></div>
+					<div id="chartControls">
+						<p><Strong>Manipulate the bubble chart with the controls below:</strong></p>
+						<div class="row col-md-12">
+							<div class="col-md-6">
+								<div class="form-group">
+									<label class="control-label" for="xVariable">X-axis</label>
+									<select type="text" id="xVariable" style="width:200px" class="form-control scatterVariable scatter-control" ></select> 
+									<p class="small" id="xVariable-description">This variable does this</p>
+								</div> <!-- X-axis -->
+								<div class="form-group">
+									<label class="control-label" for="yVariable">Y-axis</label>
+									<select type="text" id="yVariable" style="width:200px" class="form-control scatterVariable scatter-control" >
+									</select>
+									<p class="small" id="yVariable-description">This variable does this</p>
+								</div><!-- Y-axis -->
+							</div> <!-- X & Y -->
+							
+							<div class="col-md-6">
+								<div class="form-group">
+									<label class="control-label" for="rVariable">Radius</label>
+									<select type="text" id="rVariable" style="width:200px" class="form-control scatterVariable scatter-control" ></select> 
+									<p class="small" id="rVariable-description">This variable does this</p>
+								</div><!-- Radius -->
+								<div class="form-group">
+									<label class="control-label" for="colorVariable">Color</label>
+									<select type="text" id="colorVariable" style="width:200px" class="form-control scatterVariable scatter-control" ></select> 
+									<p class="small" id="colorVariable-description">This variable does this</p>
+								</div><!-- Color -->
+								<label class="control-label" for="ProjectTypeFilter">Filter by project type</label>
+								<select  id="ProjectTypeFilter">
+									<option value="">All</option>
+									<option value="Bike/Ped">Bicycle & Pedestrian</option>
+									<option value="Road Asset">Roadway Asset Management & Resiliency</option>
+									<option value="Road Expansion">Roadway Expansion</option>
+									<option value="Road Operations">Roadway Transportation Sytem Management & Operations</option>
+									<option value="Transit Asset">Transit Asset Management & System Upgrades</option>
+									<option value="Transit Expansion">Transit Expansion</option>
+									<option value="Trail">Trail</option>
+									<option value="Miscellaneous">Miscellaneous Emissions Related Projects</option>
+								</select> 
+							</div><!-- Radius & Color & ProjectTypeFilter-->
+						</div> <!--row col-md-12-->
+					</div> <!-- Chartcontrols-->
+				</div> <!--chartPanel-->
+			</div> <!--chartSide -->
+		</div> <!--id : container-->
+		
+		<div id="aboutModal" class="modal fade">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+						<h4 class="modal-title">ARC Project Evaluation Tool</h4>
+					</div>
+					<div class="modal-body">
+					<p>This tool was created as a way to visualize all of the data being used in transportation project evaluations for the region.  It is currently restricted to federally funded capacity projects, but we hope it will continue to grow until each project and its data are represented. The ARC wants to open up our data and our process used to evaluate projects for users to manipulate and compare.</p>
+					<h4>Transportation Project Scoring</h4>
+					<p>All projects are scored and ranked based on the primary project type indicated by the sponsor when applying. The TIP Prioritization Task Force determined that although evaluation criteria are held constant across project types, performance measures and metrics vary too much to allow for normalized scoring across different project types. As a result, projects are scored only against similar projects.</p>
+					<p>After staff distribute scores, it’s then possible to compare across project types to help identify projects of any type that contribute towards the goals of a specific criterion. For example, trail projects are scoredonly against other trail projects for the safety criterion. After scores are tallied for all projects, across all types, staff could compare trail safety projects to roadway expansion safety projects with a goal of selecting a handful of projects that have the potential to contribute the most to improved safety in the region.</p>
+					<p>Each criterion can receive a maximum of 100 points. After weights are applied across all the criteria, projects are scaled based on the applied weights for a final KDP2 project score between 0-100.</p>
+					<h5>List of variables</h5>
+						<div id="variable-list"></div>
+					</div> <!--modal-body-->
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					</div> <!--modal-footer-->
+				</div><!-- /.modal-content -->
+			</div><!-- /.modal-dialog -->
+		</div><!-- /.aboutModal -->
+		
+		<script type="text/javascript" src="assets/js/script.js"></script>
+	
+	</body>
+</html>
