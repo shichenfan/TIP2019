@@ -52,7 +52,7 @@ var options={
   minZoom:9
 };
 // Provide your access token
-	L.mapbox.accessToken = 'pk.eyJ1IjoiYXRscmVnaW9uYWwiLCJhIjoiQmZ6d2tyMCJ9.oENm3NSf--qHrimdm9Vvdw';
+	L.mapbox.accessToken = 'pk.eyJ1IjoiZnNjeHh4IiwiYSI6ImNqbGRyeXZieTBiMmEzcXF6aDBuajd2MzAifQ.RP27oQjdKHxmq0VP-hVXLA';
 	// Create a map in the div #map
 	map = L.mapbox.map('map', 'atlregional.tm2-basemap',options).setView([ 33.45,-84.23]);
 
@@ -219,7 +219,7 @@ var variableMap = {
 		"description": "FY 2021 Award",
 		"column_chart": false
 		
-	}
+	},
 };
 formats.dollar = d3.format('$,.2s');
 formats.fullDollar = d3.format('$,.2');
@@ -417,7 +417,7 @@ function getFilters(){
 	return filters;
 }
 function closeChart(){
-	$('#ProjectTypeFilter').val('');
+	$('#countyFilter').val('');
 	$('#data-summary').html('');
 	if (previousProps !== null){
 		info.update();
@@ -1354,15 +1354,42 @@ function getColorScale(row){
 		    	.range(colorbrewer.RdPu.mod7)
 			return jenks[colorVariable](+row[colorVariable]);
 		 }
-		else  if (colorVariable === 'performance_tier'){
+		/*else  if (colorVariable === 'KDP2_score_tier'){
 			var colorDomain = [1,5];
 			 breaks = [1,1.9,2.9,3.9,4.9,5.9]
 			jenks[colorVariable] = d3.scale.quantile()
 		   	.domain(breaks)
 		    	.range(colorbrewer.RdPu.mod7)
 			return jenks[colorVariable](+row[colorVariable]);
-		 }
-		else  if (colorVariable === 'reliability'){
+		 }*/
+		
+		 
+		 else  if (colorVariable === 'mobility'){
+			var colorDomain = [+_.min(filteredRows,colorVariable)[colorVariable],100];
+			breaks = [0, undefined, 100]
+			jenks[colorVariable] = d3.scale.quantile()
+		   	 .domain(breaks)
+		    	.range(colorbrewer.RdPu.mod7)
+			return jenks[colorVariable](+row[colorVariable]); 
+		} 
+		  else  if (colorVariable === 'safety'){
+			var colorDomain = [+_.min(filteredRows,colorVariable)[colorVariable],100];
+			breaks = [0, undefined, 100]
+			jenks[colorVariable] = d3.scale.quantile()
+		   	 .domain(breaks)
+		    	.range(colorbrewer.RdPu.mod7)
+			return jenks[colorVariable](+row[colorVariable]); 
+		} 
+		  else  if (colorVariable === 'connectivity'){
+			var colorDomain = [+_.min(filteredRows,colorVariable)[colorVariable],100];
+			breaks = [0, undefined, 100]
+			jenks[colorVariable] = d3.scale.quantile()
+		   	 .domain(breaks)
+		    	.range(colorbrewer.RdPu.mod7)
+			return jenks[colorVariable](+row[colorVariable]); 
+		} 
+		 
+		else  if (colorVariable === 'multimodalism'){
 			var colorDomain = [+_.min(filteredRows,colorVariable)[colorVariable],100];
 			breaks = [0, undefined, 100]
 			jenks[colorVariable] = d3.scale.quantile()
@@ -1370,7 +1397,7 @@ function getColorScale(row){
 		    	.range(colorbrewer.RdPu.mod7)
 			return jenks[colorVariable](+row[colorVariable]); 
 		}
-		else  if (colorVariable === 'connect'){
+		else  if (colorVariable === 'emp_access'){
 			var colorDomain = [+_.min(filteredRows,colorVariable)[colorVariable],+_.max(filteredRows,colorVariable)[colorVariable]];
 			breaks = [0, undefined, 100]
 			jenks[colorVariable] = d3.scale.quantile()
@@ -1378,7 +1405,7 @@ function getColorScale(row){
 		    	.range(colorbrewer.RdPu.mod7)
 			return jenks[colorVariable](+row[colorVariable]); 
 		}
-	else  if (colorVariable === 'multimodal'){
+	else  if (colorVariable === 'land_compat'){
 			var colorDomain = [+_.min(filteredRows,colorVariable)[colorVariable],100];
 			 breaks = ss.jenks(csvRows.map(function(d) { return +d[colorVariable]; }), 3)
 			jenks[colorVariable] = d3.scale.quantile()
@@ -1386,7 +1413,7 @@ function getColorScale(row){
 		    	.range(colorbrewer.RdPu.mod7)
 			return jenks[colorVariable](+row[colorVariable]);
 		 }
-	else  if (colorVariable === 'assetmngmt'){
+	else  if (colorVariable === 'social_equity'){
 			var colorDomain = [+_.min(filteredRows,colorVariable)[colorVariable],100];
 			breaks = [0, undefined, 100]
 			jenks[colorVariable] = d3.scale.quantile()
@@ -1402,14 +1429,31 @@ function getColorScale(row){
 		    	.range(colorbrewer.RdPu.mod7)
 			return jenks[colorVariable](+row[colorVariable]); 
 		}
-		else  if (colorVariable === 'land_compat'){
+		else  if (colorVariable === 'cultenv'){
 			var colorDomain = [+_.min(filteredRows,colorVariable)[colorVariable],100];
 			breaks = ss.jenks(csvRows.map(function(d) { return +d[colorVariable]; }), 2)
 			jenks[colorVariable] = d3.scale.quantile()
 		   	 .domain(breaks)
 		    	.range(colorbrewer.RdPu.mod7)
 			return jenks[colorVariable](+row[colorVariable]); 
-		}else  if (colorVariable === 'goods_move'){
+		}
+		else  if (colorVariable === 'assetmngmt'){
+			var colorDomain = [+_.min(filteredRows,colorVariable)[colorVariable],100];
+			breaks = ss.jenks(csvRows.map(function(d) { return +d[colorVariable]; }), 2)
+			jenks[colorVariable] = d3.scale.quantile()
+		   	 .domain(breaks)
+		    	.range(colorbrewer.RdPu.mod7)
+			return jenks[colorVariable](+row[colorVariable]); 
+		}
+		else  if (colorVariable === 'reliability'){
+			var colorDomain = [+_.min(filteredRows,colorVariable)[colorVariable],100];
+			breaks = ss.jenks(csvRows.map(function(d) { return +d[colorVariable]; }), 2)
+			jenks[colorVariable] = d3.scale.quantile()
+		   	 .domain(breaks)
+		    	.range(colorbrewer.RdPu.mod7)
+			return jenks[colorVariable](+row[colorVariable]); 
+		}
+		else  if (colorVariable === 'goods_move'){
 			var colorDomain = [+_.min(filteredRows,colorVariable)[colorVariable],100];
 			// breaks = ss.jenks(csvRows.map(function(d) { return +d[colorVariable]; }), 2)
 			breaks = [0, undefined, 100]
@@ -1480,7 +1524,7 @@ function initialize() {
 		colorVariable = this.value;
 		resetMarkers();
 	});
-	$('#ProjectTypeFilter').change(function(){
+	$('#countyFilter').change(function(){
 		removeHighlightIds();
 		if (this.value !== ''){
 			var layers = countyMap[this.value];
